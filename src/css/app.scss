@@ -1,7 +1,7 @@
 // app global css in SCSS form
 .custom_header {
   //background: linear-gradient(135deg, #00278e, #0a0a0a);
-  background: linear-gradient(-135deg, #070709, #1b1871);
+  background: linear-gradient(135deg, #15153c, #070709);
   color: white;
   padding: 5px;
   text-align: left;
@@ -10,9 +10,10 @@
 
 .main_page {
   background: linear-gradient(135deg, #243B55, #141E30);
+  text-align: left;
   color: white;
   min-height: 100vh;
-  padding: 40px;
+  padding: 10px;
   font-family: Arial, sans-serif;
 }
 
@@ -26,4 +27,17 @@
   font-size: 18px;
   line-height: 1.6;
   text-align: justify;
+}
+
+.body_parts_selector {
+  margin-top: 18vh;
+  margin-left: 42.5vw;
+  background-color: #00000000;
+  //background-color: red;
+  width: 15vw;
+  height: 60vh;
+}
+
+.parts_selector_images {
+  width: 15vw;
 }
