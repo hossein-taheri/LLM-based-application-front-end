@@ -1,1 +1,29 @@
 // app global css in SCSS form
+.custom_header {
+  //background: linear-gradient(135deg, #00278e, #0a0a0a);
+  background: linear-gradient(-135deg, #070709, #1b1871);
+  color: white;
+  padding: 5px;
+  text-align: left;
+  font-size: 24px;
+}
+
+.main_page {
+  background: linear-gradient(135deg, #243B55, #141E30);
+  color: white;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: Arial, sans-serif;
+}
+
+.main_page h1 {
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main_page p {
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: justify;
+}
