@@ -1,8 +1,72 @@
 <template>
-  <q-page class="main_page">
+  <q-page class="main_page row">
     <q-card
       flat
-      class="body_parts_selector">
+      class="col-6 transparent_background custom_cards row">
+      <q-list
+        v-if="this.bodyPart"
+        separator
+        bordered
+        class="col-5 custom_list rounded-borders shadow-10"
+      >
+        <q-item>
+          <q-item-section>
+            <q-item-label header class="text-h5 text-white">{{ this.capitalize(this.bodyPart) }}'s Symptoms
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-for="(item, index) in this.mappingSymptomsToBodyParts[this.bodyPart]" :key="index" clickable>
+          <q-item-section @click="this.addToSymptoms(this.bodyPart, item, index)">
+            {{ this.capitalize(item) }}
+          </q-item-section>
+        </q-item>
+      </q-list>
+
+      <q-card v-if="this.bodyPart" bordered flat class="transparent_background col-1">
+
+      </q-card>
+
+      <q-list
+        bordered
+        separator
+        rounded
+        class="col-5 custom_list rounded-borders shadow-10">
+        <q-item>
+          <q-item-section>
+            <q-item-label header class="text-h5 text-white">Your Current Symptoms</q-item-label>
+          </q-item-section>
+        </q-item>
+        <template v-if="this.chosen_symptoms_length === 0">
+          <q-item>
+            <q-item-section>
+              You should click on body parts and choose your symptoms in the image
+            </q-item-section>
+          </q-item>
+        </template>
+        <template v-else>
+          <template v-for="(index,item) in chosen_symptoms" :key="index">
+            <q-item clickable v-if="this.chosen_symptoms[item].length !== 0">
+              <q-item-section>
+                <q-item-label>{{ this.capitalize(item) }}</q-item-label>
+                <q-list>
+                  <q-item v-for="(symptom,i) in this.chosen_symptoms[item]" :key="i" clickable>
+                    <q-item-section>
+                      {{ this.capitalize(symptom) }}
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-item-section>
+            </q-item>
+          </template>
+
+        </template>
+
+      </q-list>
+    </q-card>
+    <q-card
+      flat
+      @click="clearBodyPart()"
+      class="col-4 body_parts_selector transparent_background custom_cards">
       <div class="human-body parts_selector_images">
         <svg
           @click="partClicked('head')"
@@ -104,30 +168,196 @@
         </svg>
       </div>
     </q-card>
+    <q-card
+      flat
+      class="col-2 transparent_background custom_cards">
+      <div class="button-wrapper">
+        <q-btn
+          @mousedown="startHold"
+          @mouseup="stopHold"
+          @mouseleave="stopHold"
+          :class="{ 'holding': isHolding }"
+          class="animated-button"
+          @click="handleClick"
+        >
+          <div class="progress-overlay" v-if="isHolding"></div>
+          <q-btn-label>Continue</q-btn-label>
+        </q-btn>
+      </div>
+    </q-card>
   </q-page>
 </template>
 
 <script setup>
+
 defineOptions({
   name: 'IndexPage',
+  data() {
+    return {
+      chosen_symptoms: {
+        "head": [],
+        "left-shoulder": [],
+        "right-shoulder": [],
+        "left-arm": [],
+        "right-arm": [],
+        "chest": [],
+        "stomach": [],
+        "left-leg": [],
+        "right-leg": [],
+        "left-hand": [],
+        "right-hand": [],
+        "left-foot": [],
+        "right-foot": [],
+      },
+      chosen_symptoms_length: 0,
+      bodyPart: null,
+      mappingSymptomsToBodyParts: {
+        "head": [
+          "headache",
+          "dizziness",
+          "continuous_sneezing",
+          "sunken_eyes",
+          "redness_of_eyes",
+          "blurred_and_distorted_vision",
+          "runny_nose",
+          "visual_disturbances"
+        ],
+        "left-shoulder": ["joint_pain", "muscle_weakness", "swelling_joints", "movement_stiffness"],
+        "right-shoulder": ["joint_pain", "muscle_weakness", "swelling_joints", "movement_stiffness"],
+        "left-arm": ["weakness_in_limbs", "muscle_pain", "bruising", "swelling_joints", "muscle_weakness"],
+        "right-arm": ["weakness_in_limbs", "muscle_pain", "bruising", "swelling_joints", "muscle_weakness"],
+        "chest": [
+          "chest_pain", "cough", "breathlessness", "fast_heart_rate",
+          "palpitations", "sweating", "mood_swings", "depression"
+        ],
+        "stomach": [
+          "stomach_pain", "acidity", "vomiting", "stomach_bleeding", "belly_pain",
+          "swelling_of_stomach", "abdominal_pain", "diarrhoea",
+        ],
+        "left-leg": [
+          "muscle_pain", "knee_pain", "cramps", "swollen_legs", "prominent_veins_on_calf",
+          "painful_walking", "swelling_joints", "muscle_weakness"
+        ],
+        "right-leg": [
+          "muscle_pain", "knee_pain", "cramps", "swollen_legs", "prominent_veins_on_calf",
+          "painful_walking", "swelling_joints", "muscle_weakness"
+        ],
+        "left-hand": ["muscle_weakness", "swelling_joints", "stiff_neck"],
+        "right-hand": ["muscle_weakness", "swelling_joints", "stiff_neck"],
+        "left-foot": [
+          "swollen_extremeties", "painful_walking", "blisters", "muscle_pain",
+          "weakness_in_limbs", "swollen_legs"
+        ],
+        "right-foot": [
+          "swollen_extremeties", "painful_walking", "blisters", "muscle_pain",
+          "weakness_in_limbs", "swollen_legs"
+        ]
+      },
+      holdTimeout: null,
+      isHolding: false,
+    }
+  },
   methods: {
     partClicked(partName) {
-      console.log(partName)
-    }
+      this.bodyPart = partName
+    },
+    clearBodyPart() {
+      const clickedElement = event.target;
+      if (clickedElement.tagName.toString() === "DIV") {
+        this.bodyPart = null
+      }
+    },
+    capitalize(string) {
+      let strings = string.split(/[-:_]/)
+      let complete_name = ""
+      for (let i = 0; i < strings.length; i++) {
+        strings[i] = strings[i][0].toUpperCase() + strings[i].slice(1).toLowerCase()
+        complete_name += strings[i]
+        if (i !== strings.length - 1) {
+          complete_name += " "
+        }
+      }
+      return complete_name
+    },
+    addToSymptoms(bodyPart, item, index) {
+      if (!this.chosen_symptoms[bodyPart].includes(item)) {
+        this.chosen_symptoms[bodyPart].push(item)
+        this.chosen_symptoms_length += 1;
+      }
+      console.log([this.chosen_symptoms_length, this.chosen_symptoms])
+    },
+    startHold() {
+      this.isHolding = true;
+      this.holdTimeout = setTimeout(() => {
+        if (this.isHolding) {
+          this.handleClick();
+        }
+      }, 1000); // Change to 2000 for 2 seconds
+    },
+    stopHold() {
+      clearTimeout(this.holdTimeout);
+      this.isHolding = false;
+    },
+    handleClick() {
+      // Handle the button click action
+      console.log('Button clicked');
+    },
   }
 });
-// window.onload = function () {
-//   const pieces = document.getElementsByTagName('svg');
-//   for (var i = 0; pieces.length; i++) {
-//     let _piece = pieces[i];
-//     _piece.onclick = function (t) {
-//       if (t.target.getAttribute('data-position') != null) document.getElementById('data').innerHTML = t.target.getAttribute('data-position');
-//       if (t.target.parentElement.getAttribute('data-position') != null) {
-//         console.log(t.target.parentElement.getAttribute('data-position'))
-//         // document.getElementById('data').innerHTML = t.target.parentElement.getAttribute('data-position');
-//       }
-//     }
-//   }
-// }
 
 </script>
+
+<style scoped>
+.button-wrapper {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.animated-button {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.animated-button.holding {
+  transform: scale(1.1);
+}
+
+.progress-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 5px solid rgba(0, 0, 0, 0.2);
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.progress-overlay {
+  transform: rotate(0deg);
+  border-color: rgba(0, 0, 0, 0.2);
+  border-top-color: rgba(0, 0, 0, 0.5);
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>

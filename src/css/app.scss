@@ -30,14 +30,34 @@
 }
 
 .body_parts_selector {
-  margin-top: 18vh;
-  margin-left: 42.5vw;
-  background-color: #00000000;
-  //background-color: red;
-  width: 15vw;
-  height: 60vh;
+}
+
+.custom_list {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px;
+  margin-bottom: 5vh;
+}
+
+.chosen_list {
+  background-color: rgba(89, 156, 255, 0.1);
+}
+
+.custom_cards {
+  padding: 10px;
 }
 
 .parts_selector_images {
-  width: 15vw;
+  margin-top: 15vh;
+  //width: 15vw;
+  //height: 60vh;
+  //margin-left: 42.5vw;
+  //width: 15vw;
+}
+
+.transparent_background {
+  background-color: #00000000;
+}
+
+.red_background {
+  background-color: red;
 }
