@@ -49,7 +49,8 @@
               <q-item-section>
                 <q-item-label>{{ this.capitalize(item) }}</q-item-label>
                 <q-list>
-                  <q-item v-for="(symptom,i) in this.chosen_symptoms[item]" :key="i" clickable>
+                  <q-item v-for="(symptom,i) in this.chosen_symptoms[item]" :key="i" clickable
+                          @click="this.showDeleteConfirm(item, symptom)">
                     <q-item-section>
                       {{ this.capitalize(symptom) }}
                     </q-item-section>
@@ -170,7 +171,8 @@
     </q-card>
     <q-card
       flat
-      class="col-2 transparent_background custom_cards">
+      class="col-2 transparent_background custom_cards button_holder"
+    >
       <div class="button-wrapper">
         <q-btn
           @mousedown="startHold"
@@ -185,6 +187,18 @@
         </q-btn>
       </div>
     </q-card>
+    <q-dialog v-model="deleteDialog" backdrop-filter="blur(20px)">
+      <q-card dark class="shadow-0">
+        <q-card-section>
+          <div class="text-h6">Are you sure you want to delete this item?</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" @click="cancelDelete"/>
+          <q-btn flat label="Delete" color="negative" @click="confirmDelete"/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -255,6 +269,9 @@ defineOptions({
       },
       holdTimeout: null,
       isHolding: false,
+      deleteDialog: false,
+      deletePartBody: false,
+      deleteItemname: false,
     }
   },
   methods: {
@@ -290,18 +307,39 @@ defineOptions({
       this.isHolding = true;
       this.holdTimeout = setTimeout(() => {
         if (this.isHolding) {
-          this.handleClick();
+          this.goToChatPage();
         }
-      }, 1000); // Change to 2000 for 2 seconds
+      }, 1000);
     },
     stopHold() {
       clearTimeout(this.holdTimeout);
       this.isHolding = false;
     },
-    handleClick() {
-      // Handle the button click action
+    goToChatPage() {
       console.log('Button clicked');
     },
+    showDeleteConfirm(deletePartBody, deleteItem) {
+      this.deleteDialog = true;
+      this.deletePartBody = deletePartBody
+      this.deleteItemname = deleteItem
+    },
+    confirmDelete() {
+      this.deleteItem();
+      this.deleteDialog = false;
+    },
+    cancelDelete() {
+      this.deleteDialog = false;
+    },
+    deleteItem() {
+      console.log(this.deletePartBody, this.deleteItemname)
+      let array = this.chosen_symptoms[this.deletePartBody]
+      const index = array.indexOf(this.deleteItemname);
+      if (index > -1) {
+        array.splice(index, 1);
+      }
+      console.log("Item deleted");
+    },
+
   }
 });
 
@@ -324,7 +362,15 @@ defineOptions({
   justify-content: center;
   position: relative;
   transition: transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  color: #81aaff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+}
+
+.button_holder {
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  position: relative;
 }
 
 .animated-button.holding {
@@ -338,7 +384,7 @@ defineOptions({
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 5px solid rgba(0, 0, 0, 0.2);
+  border: 5px solid rgba(0, 0, 0, 1);
   border-top-color: transparent;
   animation: spin 1s linear infinite;
   z-index: 1;
