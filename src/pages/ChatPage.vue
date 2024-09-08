@@ -9,6 +9,7 @@
           :sent="message['sent']"
           :bg-color="message['color']"
         />
+        <!--          bg-color=""-->
       </div>
       <div class="row">
         <q-input
@@ -23,7 +24,7 @@
         />
         <q-btn class="col-1" icon="send"
                flat
-               @click="sendMessage" />
+               @click="sendMessage"/>
       </div>
     </q-card>
   </q-page>
@@ -32,59 +33,59 @@
 <script>
 import axios from 'axios';
 import {QChatMessage, QInput, QBtn, QCard, QPage} from 'quasar'; // Import necessary components
+import {convertDiseasesToFirstPrompt, sendMessage, getMessages} from 'src/helpers/chat_gpt.js'
 
 export default {
   data() {
     return {
       userMessage: '',
-      messages: [
-        {
-          text: "Hi! How can I assist you?",
-          sent: false,
-          color: "white"
-        },
-      ],
+      messages: [],
     };
   },
   mounted() {
     const serializedArray = this.$route.query.data;
     const myArray = JSON.parse(serializedArray);
-    console.log(myArray)
+    const firstPrompt = convertDiseasesToFirstPrompt(myArray)
+    this.addUserMessage(firstPrompt)
+    sendMessage(
+      firstPrompt
+    ).then(message => {
+      this.addSystemMessage(message)
+    })
+
   },
   methods: {
     async sendMessage() {
       if (!this.userMessage) return;
 
       const userText = this.userMessage;
-      this.messages.push({text: userText, sent: true});
-
-      // Clear input
+      this.addUserMessage(userText)
       this.userMessage = '';
 
-      // try {
-      //   const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-      //     model: "gpt-4",
-      //     messages: [{role: "user", content: userText}],
-      //   }, {
-      //     headers: {
-      //       Authorization: `Bearer YOUR_OPENAI_API_KEY`,
-      //       'Content-Type': 'application/json'
-      //     }
-      //   });
-      //
-      //   const botReply = response.data.choices[0].message.content;
-      //   this.messages.push({text: botReply, sent: false});
-      //
-      //   // Scroll to the latest message
-      //   this.$nextTick(() => {
-      //     this.$refs.inputField.focus();
-      //   });
-      //
-      // } catch (error) {
-      //   console.error(error);
-      //   this.messages.push({text: "Something went wrong. Please try again.", sent: false});
-      // }
+      sendMessage(
+        convertDiseasesToFirstPrompt(userText)
+      ).then(message => {
+        this.addSystemMessage(message)
+      })
     },
+    addSystemMessage(message) {
+      this.messages.push(
+        {
+          text: message,
+          sent: false,
+          color: "amber-2",
+        }
+      )
+    },
+    addUserMessage(message) {
+      this.messages.push(
+        {
+          text: message,
+          sent: true,
+          color: "cyan-2",
+        }
+      )
+    }
   },
 };
 </script>
