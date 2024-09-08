@@ -171,7 +171,7 @@
     </q-card>
     <q-card
       flat
-      class="col-2 transparent_background custom_cards button_holder"
+      class="col-2 transparent_background custom_cards button_holder flex flex-center"
     >
       <div class="button-wrapper">
         <q-btn
@@ -181,9 +181,9 @@
           :class="{ 'holding': isHolding }"
           class="animated-button"
           @click="handleClick"
+          icon="arrow_forward_ios"
         >
           <div class="progress-overlay" v-if="isHolding"></div>
-          <q-btn-label>Continue</q-btn-label>
         </q-btn>
       </div>
     </q-card>
@@ -316,7 +316,9 @@ defineOptions({
       this.isHolding = false;
     },
     goToChatPage() {
-      console.log('Button clicked');
+      const array = this.chosen_symptoms;
+      const jsonArray = JSON.stringify(array);
+      this.$router.push({ path: '/chat-page', query: { data: jsonArray } });
     },
     showDeleteConfirm(deletePartBody, deleteItem) {
       this.deleteDialog = true;
@@ -337,6 +339,7 @@ defineOptions({
       if (index > -1) {
         array.splice(index, 1);
       }
+      this.chosen_symptoms_length -= 1
       console.log("Item deleted");
     },
 
@@ -353,8 +356,8 @@ defineOptions({
 }
 
 .animated-button {
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   border-radius: 50%;
   font-size: 18px;
   display: flex;
@@ -362,8 +365,8 @@ defineOptions({
   justify-content: center;
   position: relative;
   transition: transform 0.3s ease;
-  color: #81aaff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+  color: white;
+  box-shadow: 0 0 50px rgba(255, 255, 255, 0.5);
 }
 
 .button_holder {
@@ -384,7 +387,6 @@ defineOptions({
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 5px solid rgba(0, 0, 0, 1);
   border-top-color: transparent;
   animation: spin 1s linear infinite;
   z-index: 1;

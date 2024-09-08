@@ -7,7 +7,7 @@
           :key="index"
           :text="[message['text']]"
           :sent="message['sent']"
-          bg-color="blue-2"
+          :bg-color="message['color']"
         />
       </div>
       <div class="row">
@@ -40,10 +40,16 @@ export default {
       messages: [
         {
           text: "Hi! How can I assist you?",
-          sent: false
+          sent: false,
+          color: "white"
         },
       ],
     };
+  },
+  mounted() {
+    const serializedArray = this.$route.query.data;
+    const myArray = JSON.parse(serializedArray);
+    console.log(myArray)
   },
   methods: {
     async sendMessage() {
