@@ -4,33 +4,9 @@
       flat
       class="col-6 transparent_background custom_cards row">
       <q-list
-        v-if="this.bodyPart"
-        separator
         bordered
-        class="col-5 custom_list rounded-borders shadow-10"
-      >
-        <q-item>
-          <q-item-section>
-            <q-item-label header class="text-h5 text-white">{{ this.capitalize(this.bodyPart) }}'s Symptoms
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-for="(item, index) in this.mappingSymptomsToBodyParts[this.bodyPart]" :key="index" clickable>
-          <q-item-section @click="this.addToSymptoms(this.bodyPart, item, index)">
-            {{ this.capitalize(item) }}
-          </q-item-section>
-        </q-item>
-      </q-list>
-
-      <q-card v-if="this.bodyPart" bordered flat class="transparent_background col-1">
-
-      </q-card>
-
-      <q-list
-        bordered
-        separator
         rounded
-        class="col-5 custom_list rounded-borders shadow-10">
+        class="col-5 custom_list rounded-borders shadow-10 q-mr-xl">
         <q-item>
           <q-item-section>
             <q-item-label header class="text-h5 text-white">Your Current Symptoms</q-item-label>
@@ -63,6 +39,26 @@
         </template>
 
       </q-list>
+      <transition name="fade-expand">
+        <q-list
+          separator
+          bordered
+          :style="{ opacity: this.bodyPart ? '1' : '0' }"
+          class="col-5 custom_list custom_animated_list rounded-borders shadow-10"
+        >
+          <q-item>
+            <q-item-section>
+              <q-item-label header class="text-h5 text-white">{{ this.capitalize(this.bodyPart) }}'s Symptoms
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-for="(item, index) in this.mappingSymptomsToBodyParts[this.bodyPart]" :key="index" clickable>
+            <q-item-section @click="this.addToSymptoms(this.bodyPart, item, index)">
+              {{ this.capitalize(item) }}
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </transition>
     </q-card>
     <q-card
       flat
@@ -285,6 +281,10 @@ defineOptions({
       }
     },
     capitalize(string) {
+      console.log("string", string)
+      if (string == null || string === "") {
+        return null
+      }
       let strings = string.split(/[-:_]/)
       let complete_name = ""
       for (let i = 0; i < strings.length; i++) {
@@ -318,7 +318,7 @@ defineOptions({
     goToChatPage() {
       const array = this.chosen_symptoms;
       const jsonArray = JSON.stringify(array);
-      this.$router.push({ path: '/chat-page', query: { data: jsonArray } });
+      this.$router.push({path: '/chat-page', query: {data: jsonArray}});
     },
     showDeleteConfirm(deletePartBody, deleteItem) {
       this.deleteDialog = true;
@@ -407,5 +407,17 @@ defineOptions({
   100% {
     transform: rotate(360deg);
   }
+}
+
+.fade-expand-enter-active, .fade-expand-leave-active {
+  transition: opacity 2s ease;
+}
+
+.fade-expand-enter, .fade-expand-leave-to { /* Starting and ending state */
+  opacity: 0;
+}
+
+.animated-list {
+  opacity: 1;   /* Fully visible opacity */
 }
 </style>

@@ -5,11 +5,11 @@
         <q-chat-message
           v-for="(message, index) in messages"
           :key="index"
-          :text="[message['text']]"
           :sent="message['sent']"
           :bg-color="message['color']"
-        />
-        <!--          bg-color=""-->
+        >
+          <div v-html="message['text']" style="font-size: 18px"></div>
+        </q-chat-message>
       </div>
       <div class="row">
         <q-input
@@ -63,7 +63,7 @@ export default {
       this.userMessage = '';
 
       sendMessage(
-        convertDiseasesToFirstPrompt(userText)
+        userText
       ).then(message => {
         this.addSystemMessage(message)
       })
