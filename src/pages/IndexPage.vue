@@ -52,8 +52,9 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-for="(item, index) in this.mappingSymptomsToBodyParts[this.bodyPart]" :key="index" clickable>
-            <q-item-section @click="this.addToSymptoms(this.bodyPart, item, index)">
+          <q-item v-for="(item, index) in this.mappingSymptomsToBodyParts[this.bodyPart]" :key="index" clickable
+                  @click="this.addToSymptoms(this.bodyPart, item, index)">
+            <q-item-section>
               {{ this.capitalize(item) }}
             </q-item-section>
           </q-item>
@@ -418,6 +419,6 @@ defineOptions({
 }
 
 .animated-list {
-  opacity: 1;   /* Fully visible opacity */
+  opacity: 1; /* Fully visible opacity */
 }
 </style>

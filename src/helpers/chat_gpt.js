@@ -49,10 +49,13 @@ export function convertDiseasesToFirstPrompt(myArray) {
   const uniqueStrings = [...new Set(allStrings)];
   return `What disease is associated with these symptoms: ${uniqueStrings} ,
 
-  if you think the provided symptoms are not enough to detect disease with a proper accuracy then don't detect anything and write "Please provide more information about your symptoms or medical situation"
+
 
   Also In case of disease detection explain why you have choose this answer based on your knowledge in separate section named "Explanation for my detection".
   And if you did not detect any specific disease then dont write any "Explanation for my detection" section
 
   And don't use any h1 tag in your response`
 }
+
+
+//if you think the provided symptoms are not enough to detect disease with a proper accuracy then don't detect anything and write "Please provide more information about your symptoms or medical situation"
