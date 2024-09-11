@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {getToken} from 'src/helpers/auth';
+import {clearToken, getToken, redirectToLoginPage} from 'src/helpers/auth';
 import {Loading, Notify} from 'quasar';
 
 const baseUrl = "/api/"
@@ -22,6 +22,10 @@ export async function sendRequest(url, method = 'GET', data = null, headers = {}
     Loading.hide();
     return response.data;
   } catch (error) {
+    if (error.response.status === 401) {
+      clearToken()
+      redirectToLoginPage()
+    }
     Loading.hide();
     console.log(error)
     let message = "An unexpected error has been accrued"

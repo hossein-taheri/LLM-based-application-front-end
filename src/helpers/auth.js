@@ -8,6 +8,10 @@ export function getToken() {
   return localStorage.getItem("accessToken")
 }
 
+export function clearToken() {
+  return localStorage.removeItem("accessToken")
+}
+
 export function redirectToLoginPage() {
   window.location.href = '/#/auth/sign-in';
 }
@@ -30,7 +34,7 @@ export async function login(email, password) {
   }
 }
 
-export function isLoggedIn(){
+export function isLoggedIn() {
   const token = getToken()
   return token == null
 }

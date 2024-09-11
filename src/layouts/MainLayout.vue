@@ -3,6 +3,7 @@
 
     <q-header reveal elevated class="custom_header text-white">
       <q-toolbar>
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
         <q-toolbar-title>
           <q-avatar rounded size="xl">
             <img src="/icons/big-icon.svg">
@@ -12,7 +13,39 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" overlay behavior="mobile" elevated>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      side="left"
+      overlay
+      behavior="mobile"
+      dark
+      elevated>
+      <q-scroll-area class="fit">
+        <q-list>
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-icon name="refresh"/>
+            </q-item-section>
+            <q-item-section>
+              Refresh Session
+            </q-item-section>
+          </q-item>
+          <q-separator></q-separator>
+          <template v-for="(menuItem, index) in this.chats" :key="index">
+            <q-separator></q-separator>
+            <q-item clickable :active="menuItem.label === 'Outbox'" v-ripple>
+              <q-item-section avatar>
+                <q-icon :name="menuItem.icon"/>
+              </q-item-section>
+              <q-item-section>
+                {{ menuItem.label }}
+              </q-item-section>
+            </q-item>
+            <q-separator :key="'sep' + index" v-if="menuItem.separator"/>
+          </template>
+
+        </q-list>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -22,7 +55,7 @@
         @enter="enter"
         @leave="leave"
       >
-        <router-view />
+        <router-view/>
       </transition>
     </q-page-container>
 
@@ -31,6 +64,7 @@
 
 <script>
 import {ref} from 'vue'
+import {getAllChats} from "src/helpers/chat_gpt";
 
 export default {
   setup() {
@@ -42,6 +76,19 @@ export default {
         leftDrawerOpen.value = !leftDrawerOpen.value
       }
     }
+  },
+  mounted() {
+    getAllChats().then(data => {
+      this.chats = []
+      for (const chat in data['chats']) {
+        this.chats.push({
+          icon: 'chat',
+          label: data['chats'][chat]['created_at'],
+          separator: false,
+          chat_id: data['chats'][chat]['chat_id'],
+        })
+      }
+    })
   },
   methods: {
     beforeEnter(el) {
@@ -57,6 +104,12 @@ export default {
       el.style.transition = 'opacity 0.5s';
       el.style.opacity = 0;
       done();
+    }
+  },
+  data() {
+    return {
+      chats: [
+      ]
     }
   }
 }

@@ -1,6 +1,9 @@
 import {OpenAI} from 'openai'
 import {Converter} from 'showdown'
+import {sendRequest} from "src/helpers/request";
+import {setToken} from "src/helpers/auth";
 
+const api_key = null
 const openai = new OpenAI({
   apiKey: api_key,
   dangerouslyAllowBrowser: true
@@ -57,5 +60,19 @@ export function convertDiseasesToFirstPrompt(myArray) {
   And don't use any h1 tag in your response`
 }
 
+
+export async function getAllChats() {
+  try {
+    const data = await sendRequest(
+      "chat/list",
+      "GET",
+    )
+    console.log("data", data)
+    return data
+  } catch (err) {
+    throw err;
+  }
+
+}
 
 //if you think the provided symptoms are not enough to detect disease with a proper accuracy then don't detect anything and write "Please provide more information about your symptoms or medical situation"
