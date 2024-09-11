@@ -30,10 +30,13 @@ export async function login(email, password) {
   }
 }
 
+export function isLoggedIn(){
+  const token = getToken()
+  return token == null
+}
 
 export function checkIsLoggedIn() {
-  const token = getToken()
-  if (token == null) {
+  if (isLoggedIn()) {
     return redirectToLoginPage()
   }
 }
