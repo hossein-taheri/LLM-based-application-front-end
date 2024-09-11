@@ -1,8 +1,8 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card  class="blurred-background q-pa-md" style="width: 400px;">
+    <q-card class="blurred-background q-pa-md" style="width: 400px;" dark>
       <q-card-section>
-        <div class="text-h6">Sign Up</div>
+        <div class="text-h6">Sign In</div>
       </q-card-section>
 
       <q-card-section class="transparent_background">
@@ -32,46 +32,37 @@
 
 
           <q-btn
-            label="Sign Up"
+            label="Sign In"
             type="submit"
-            color="deep-purple-5"
+            color="deep-purple-10"
             class="shadow-3 q-mt-lg full-width"
             dark
           />
         </q-form>
       </q-card-section>
 
-<!--      <q-card-section class="q-pt-none">-->
-<!--        <q-separator/>-->
-<!--        <div class="q-mt-md">Already have an account?-->
-<!--          <q-btn flat label="Log In" @click="goToLogin"/>-->
-<!--        </div>-->
-<!--      </q-card-section>-->
     </q-card>
   </q-page>
 </template>
 
 <script>
+import {login} from "src/helpers/auth";
+
 export default {
   data() {
     return {
       form: {
         email: '',
         password: '',
-        confirmPassword: ''
       }
     }
   },
   methods: {
     onSubmit() {
-      if (this.$refs.form.validate()) {
-        // Handle the form submission (e.g. send to API)
-        console.log('Form is valid. Submitted data:', this.form);
-      }
+      login(this.form.email, this.form.password).then(data => {
+        this.$router.push('/');
+      })
     },
-    goToLogin() {
-      this.$router.push('/login');
-    }
   }
 }
 </script>
@@ -82,7 +73,7 @@ export default {
 }
 
 .blurred-background {
-  background: rgba(255, 255, 255, 0.3); /* Semi-transparent background */
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
   backdrop-filter: blur(10px); /* Apply blur effect */
   -webkit-backdrop-filter: blur(10px); /* For Safari */
   padding: 20px;

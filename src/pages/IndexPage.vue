@@ -201,8 +201,13 @@
 
 <script setup>
 
+import {checkIsLoggedIn} from "src/helpers/auth";
+
 defineOptions({
   name: 'IndexPage',
+  mounted() {
+    checkIsLoggedIn()
+  },
   data() {
     return {
       chosen_symptoms: {
