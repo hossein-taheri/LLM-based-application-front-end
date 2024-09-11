@@ -1,5 +1,5 @@
 <template>
-  <q-page class="main_page row">
+  <q-page class="row">
     <q-card
       flat
       class="col-6 transparent_background custom_cards row">

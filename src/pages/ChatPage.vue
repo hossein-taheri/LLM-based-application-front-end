@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center  main_page">
+  <q-page class="flex flex-center">
     <q-card class="chat-container q-pa-xl blurred-background">
       <div class="chat-messages">
         <q-chat-message
