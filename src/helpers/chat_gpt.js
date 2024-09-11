@@ -13,6 +13,7 @@ export async function loadChatMessages(chat_id) {
       "chat/get-all-messages?chat_id=" + chat_id,
       "GET",
     )
+    console.log(data)
     for (const i in data["messages"]) {
       data["messages"][i]['sent'] = data["messages"][i]['is_users']
     }

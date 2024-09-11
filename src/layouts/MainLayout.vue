@@ -22,7 +22,7 @@
       elevated>
       <q-scroll-area class="fit">
         <q-list>
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="this.refreshSession">
             <q-item-section avatar>
               <q-icon name="refresh"/>
             </q-item-section>
@@ -33,7 +33,7 @@
           <q-separator></q-separator>
           <template v-for="(menuItem, index) in this.chats" :key="index">
             <q-separator></q-separator>
-            <q-item clickable :active="menuItem.label === 'Outbox'" v-ripple>
+            <q-item clickable v-ripple @click="goToChatId(menuItem.chat_id)">
               <q-item-section avatar>
                 <q-icon :name="menuItem.icon"/>
               </q-item-section>
@@ -104,12 +104,22 @@ export default {
       el.style.transition = 'opacity 0.5s';
       el.style.opacity = 0;
       done();
+    },
+    refreshSession() {
+      this.$router.push({path: '/'});
+    },
+    goToChatId(chat_id) {
+      const jsonArray = JSON.stringify({
+        "chat_id": chat_id
+      });
+      console.log({data: jsonArray})
+      this.$router.push({path: '/chat-page/', query: {data: jsonArray}});
+      this.$router.go()
     }
   },
   data() {
     return {
-      chats: [
-      ]
+      chats: []
     }
   }
 }

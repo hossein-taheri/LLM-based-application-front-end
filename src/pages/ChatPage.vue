@@ -38,7 +38,7 @@ import {
   sendMessage,
   getMessages,
   loadChatMessages,
-  createChat
+  createChat, getAllChats
 } from 'src/helpers/chat_gpt.js'
 
 export default {
@@ -53,7 +53,10 @@ export default {
     const data = JSON.parse(this.$route.query.data)
     if (data['chat_id'] != null) {
       this.chat_id = data['chat_id']
-      this.messages = loadChatMessages(this.chat_id)
+      loadChatMessages(this.chat_id).then(data => {
+        console.log(data)
+        this.messages = data
+      })
     } else {
       createChat().then(chat_id => {
         this.chat_id = chat_id
