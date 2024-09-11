@@ -6,7 +6,7 @@
           v-for="(message, index) in messages"
           :key="index"
           :sent="message['sent']"
-          :bg-color="message['color']"
+          :bg-color="colorize(message['sent'])"
         >
           <div v-html="message['text']" style="font-size: 18px"></div>
         </q-chat-message>
@@ -33,25 +33,42 @@
 <script>
 import axios from 'axios';
 import {QChatMessage, QInput, QBtn, QCard, QPage} from 'quasar'; // Import necessary components
-import {convertDiseasesToFirstPrompt, sendMessage, getMessages} from 'src/helpers/chat_gpt.js'
+import {
+  convertDiseasesToFirstPrompt,
+  sendMessage,
+  getMessages,
+  loadChatMessages,
+  createChat
+} from 'src/helpers/chat_gpt.js'
 
 export default {
   data() {
     return {
       userMessage: '',
       messages: [],
+      chat_id: null,
     };
   },
   mounted() {
-    const serializedArray = this.$route.query.data;
-    const myArray = JSON.parse(serializedArray);
-    const firstPrompt = convertDiseasesToFirstPrompt(myArray)
-    this.addUserMessage(firstPrompt)
-    sendMessage(
-      firstPrompt
-    ).then(message => {
-      this.addSystemMessage(message)
-    })
+    const data = JSON.parse(this.$route.query.data)
+    if (data['chat_id'] != null) {
+      this.chat_id = data['chat_id']
+      this.messages = loadChatMessages(this.chat_id)
+    } else {
+      createChat().then(chat_id => {
+        this.chat_id = chat_id
+        const symptoms = data['symptoms'];
+        const firstPrompt = convertDiseasesToFirstPrompt(symptoms)
+        this.addUserMessage(firstPrompt)
+        sendMessage(
+          this.chat_id,
+          firstPrompt
+        ).then(message => {
+          this.addSystemMessage(message)
+        })
+      })
+    }
+
 
   },
   methods: {
@@ -63,6 +80,7 @@ export default {
       this.userMessage = '';
 
       sendMessage(
+        this.chat_id,
         userText
       ).then(message => {
         this.addSystemMessage(message)
@@ -73,7 +91,6 @@ export default {
         {
           text: message,
           sent: false,
-          color: "amber-2",
         }
       )
     },
@@ -82,9 +99,11 @@ export default {
         {
           text: message,
           sent: true,
-          color: "cyan-2",
         }
       )
+    },
+    colorize(sent) {
+      return sent ? "amber-2" : "cyan-2"
     }
   },
 };

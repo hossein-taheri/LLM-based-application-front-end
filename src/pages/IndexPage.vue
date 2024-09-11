@@ -323,7 +323,9 @@ defineOptions({
     },
     goToChatPage() {
       const array = this.chosen_symptoms;
-      const jsonArray = JSON.stringify(array);
+      const jsonArray = JSON.stringify({
+        "symptoms": array
+      });
       this.$router.push({path: '/chat-page', query: {data: jsonArray}});
     },
     showDeleteConfirm(deletePartBody, deleteItem) {
