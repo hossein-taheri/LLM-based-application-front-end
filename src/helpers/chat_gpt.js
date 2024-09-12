@@ -16,6 +16,9 @@ export async function loadChatMessages(chat_id) {
     console.log(data)
     for (const i in data["messages"]) {
       data["messages"][i]['sent'] = data["messages"][i]['is_users']
+      if (data["messages"][i]['sent'] === false){
+        data["messages"][i]["text"] = converter.makeHtml(data["messages"][i]["text"])
+      }
     }
     return data["messages"]
   } catch (err) {
@@ -45,7 +48,7 @@ export async function sendMessage(chat_id, message) {
         "message": message,
       }
     )
-    return data["data"]["text"]
+    return converter.makeHtml(data["data"]["text"])
   } catch (error) {
     console.error('Error sending message:', error);
     throw error;
@@ -59,15 +62,19 @@ export function getMessages() {
 export function convertDiseasesToFirstPrompt(myArray) {
   const allStrings = Object.values(myArray).flat();
   const uniqueStrings = [...new Set(allStrings)];
-  return `What disease is associated with these symptoms: ${uniqueStrings} ,
+  return `You are a medical assistant right now.I will provide you some symptoms and you tell me what disease it could be: ${uniqueStrings} ,
 
-  Also In case of disease detection explain why you have choose this answer based on your knowledge in separate section named "Explanation for my detection".
-  And if you did not detect any specific disease then dont write any "Explanation for my detection" section
+  If you provided symptoms count are not enough (were less than 4) then don't detect anything and write "Please provide more information about your symptoms or your medical situation"
 
-  And don't use any h1 tag in your response`
+  In case of any disease detection
+  Provide me information about that disease under the separate section named "More Information About Disease :"
+  And Then provide me information about why you have choose this answer based on your knowledge under the separate section named "Explanation for my detection :"
+
+  And if you did not detect any specific disease then dont write any "More Information About Disease :" or "Explanation for my detection :" section
+
+  And don't use any h1 tag in your response (you are free to use h2 or h3 tags)`
 }
 
-//if you think the provided symptoms are not enough to detect disease with a proper accuracy then don't detect anything and write "Please provide more information about your symptoms or medical situation"
 
 
 export async function getAllChats() {
