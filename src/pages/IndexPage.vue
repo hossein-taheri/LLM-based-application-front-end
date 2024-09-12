@@ -39,11 +39,11 @@
         </template>
 
       </q-list>
-      <transition name="fade-expand">
+      <transition name="fade-expand" appear>
         <q-list
+          v-if="this.bodyPart"
           separator
           bordered
-          :style="{ opacity: this.bodyPart ? '1' : '0' }"
           class="col-5 custom_list custom_animated_list rounded-borders shadow-10"
         >
           <q-item>
@@ -417,15 +417,13 @@ defineOptions({
   }
 }
 
-.fade-expand-enter-active, .fade-expand-leave-active {
-  transition: opacity 2s ease;
+.fade-expand-enter-active,
+.fade-expand-leave-active {
+  transition: opacity 1s ease;
 }
 
-.fade-expand-enter, .fade-expand-leave-to { /* Starting and ending state */
+.fade-expand-enter-from,
+.fade-expand-leave-to {
   opacity: 0;
-}
-
-.animated-list {
-  opacity: 1; /* Fully visible opacity */
 }
 </style>
