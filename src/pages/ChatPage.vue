@@ -3,12 +3,12 @@
     <q-card class="chat-container q-pa-xl blurred-background">
       <div class="chat-messages">
         <q-chat-message
-          v-for="(message, index) in messages"
+          v-for="(message, index) in this.messages"
           :key="index"
           :sent="message['sent']"
           :bg-color="colorize(message['sent'])"
         >
-          <div v-html="message['text']" style="font-size: 18px"></div>
+          <div v-html="message['text']" style="font-size: 18px;" ></div>
         </q-chat-message>
       </div>
       <div class="row">
@@ -31,8 +31,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-import {QChatMessage, QInput, QBtn, QCard, QPage} from 'quasar'; // Import necessary components
 import {
   convertDiseasesToFirstPrompt,
   sendMessage,
@@ -42,6 +40,9 @@ import {
 } from 'src/helpers/chat_gpt.js'
 
 export default {
+  props: [
+    'loadAllChats'
+  ],
   data() {
     return {
       userMessage: '',
@@ -50,25 +51,34 @@ export default {
     };
   },
   mounted() {
-    const data = JSON.parse(this.$route.query.data)
-    if (data['chat_id'] != null) {
-      this.chat_id = data['chat_id']
+    const totalData = JSON.parse(this.$route.query.data)
+    if (totalData['chat_id'] != null) {
+      this.chat_id = totalData['chat_id']
       loadChatMessages(this.chat_id).then(data => {
         console.log(data)
         this.messages = data
+        console.log("this.messages", this.messages)
+        if (this.messages.length === 0) {
+          const symptoms = totalData['symptoms'];
+          const firstPrompt = convertDiseasesToFirstPrompt(symptoms)
+          this.addUserMessage(firstPrompt)
+          sendMessage(
+            this.chat_id,
+            firstPrompt
+          ).then(message => {
+            this.addSystemMessage(message)
+          })
+        }
       })
     } else {
       createChat().then(chat_id => {
         this.chat_id = chat_id
-        const symptoms = data['symptoms'];
-        const firstPrompt = convertDiseasesToFirstPrompt(symptoms)
-        this.addUserMessage(firstPrompt)
-        sendMessage(
-          this.chat_id,
-          firstPrompt
-        ).then(message => {
-          this.addSystemMessage(message)
-        })
+        totalData['chat_id'] = this.chat_id
+        this.loadAllChats()
+        let jsonArray = JSON.stringify(totalData)
+        this.$router.push({path: '/chat-page', query: {data: jsonArray}}).then(data=>{
+            window.location.reload();
+        });
       })
     }
 
@@ -109,6 +119,13 @@ export default {
       return sent ? "amber-2" : "cyan-2"
     }
   },
+  watch: {
+    '$route.query.param': {
+      handler(newValue) {
+        this.$router.go()
+      },
+    },
+  }
 };
 </script>
 

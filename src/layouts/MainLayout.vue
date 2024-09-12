@@ -55,10 +55,9 @@
         @enter="enter"
         @leave="leave"
       >
-        <router-view/>
+        <router-view :loadAllChats="loadAllChats"/>
       </transition>
     </q-page-container>
-
   </q-layout>
 </template>
 
@@ -78,17 +77,7 @@ export default {
     }
   },
   mounted() {
-    getAllChats().then(data => {
-      this.chats = []
-      for (const chat in data['chats']) {
-        this.chats.push({
-          icon: 'chat',
-          label: data['chats'][chat]['created_at'],
-          separator: false,
-          chat_id: data['chats'][chat]['chat_id'],
-        })
-      }
-    })
+    this.loadAllChats()
   },
   methods: {
     beforeEnter(el) {
@@ -113,15 +102,31 @@ export default {
         "chat_id": chat_id
       });
       console.log({data: jsonArray})
-      this.$router.push({path: '/chat-page/', query: {data: jsonArray}});
-      this.$router.go()
+      this.$router.push({path: '/chat-page', query: {data: jsonArray}}).then(data => {
+        window.location.reload();
+      });
+    },
+    loadAllChats() {
+      getAllChats().then(
+        data => {
+          this.chats = []
+          for (const chat in data['chats']) {
+            this.chats.push({
+              icon: 'chat',
+              label: data['chats'][chat]['created_at'],
+              separator: false,
+              chat_id: data['chats'][chat]['chat_id'],
+            })
+          }
+          this.chats = this.chats.reverse()
+        });
     }
   },
   data() {
     return {
       chats: []
     }
-  }
+  },
 }
 </script>
 <style>
