@@ -172,12 +172,9 @@
     >
       <div class="button-wrapper">
         <q-btn
-          @mousedown="startHold"
-          @mouseup="stopHold"
-          @mouseleave="stopHold"
           :class="{ 'holding': isHolding }"
           class="animated-button"
-          @click="handleClick"
+          @click="this.goToChatPage()"
           icon="arrow_forward_ios"
         >
           <div class="progress-overlay" v-if="isHolding"></div>
@@ -308,18 +305,6 @@ defineOptions({
         this.chosen_symptoms_length += 1;
       }
       console.log([this.chosen_symptoms_length, this.chosen_symptoms])
-    },
-    startHold() {
-      this.isHolding = true;
-      this.holdTimeout = setTimeout(() => {
-        if (this.isHolding) {
-          this.goToChatPage();
-        }
-      }, 1000);
-    },
-    stopHold() {
-      clearTimeout(this.holdTimeout);
-      this.isHolding = false;
     },
     goToChatPage() {
       const array = this.chosen_symptoms;

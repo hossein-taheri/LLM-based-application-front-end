@@ -16,7 +16,7 @@ export async function loadChatMessages(chat_id) {
     console.log(data)
     for (const i in data["messages"]) {
       data["messages"][i]['sent'] = data["messages"][i]['is_users']
-      if (data["messages"][i]['sent'] === false){
+      if (data["messages"][i]['sent'] === false) {
         data["messages"][i]["text"] = converter.makeHtml(data["messages"][i]["text"])
       }
     }
@@ -62,19 +62,8 @@ export function getMessages() {
 export function convertDiseasesToFirstPrompt(myArray) {
   const allStrings = Object.values(myArray).flat();
   const uniqueStrings = [...new Set(allStrings)];
-  return `You are a medical assistant.I will provide you some symptoms and you tell me what disease it could be: ${uniqueStrings} ,
-
-  If you provided symptoms count are not enough (were less than 4) then don't detect anything and write "Please provide more information about your symptoms or your medical situation"
-
-  In case of any disease detection:
-  Provide me information about that disease (Descriptions of the disease and explanations about its origin, symptoms and treatment) under the separate section named "More Information About Disease :"
-  And Then provide me a full detailed report (Comprehensive and complete explanations to explain the results of this selection from the symptoms you have received as input, in at least a paragraph) about why you have choose this answer based on your knowledge under the separate section named "Explanation for my detection :"
-
-  And if you did not detect any specific disease then dont write any "More Information About Disease :" or "Explanation for my detection :" section
-
-  And don't use any h1 tag in your response (you are free to use h2 or h3 tags)`
+  return `what disease it can be related with these symptoms: ${uniqueStrings} ?`
 }
-
 
 
 export async function getAllChats() {

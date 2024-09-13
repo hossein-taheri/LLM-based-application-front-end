@@ -3,7 +3,7 @@
 
     <q-header reveal elevated class="custom_header text-white">
       <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
+        <q-btn v-show="this.isLoggedIn()" dense flat round icon="menu" @click="toggleLeftDrawer"/>
         <q-toolbar-title>
           <q-avatar rounded size="xl">
             <img src="/icons/big-icon.svg">
@@ -14,6 +14,7 @@
     </q-header>
 
     <q-drawer
+      v-show="this.isLoggedIn()"
       v-model="leftDrawerOpen"
       side="left"
       overlay
@@ -24,10 +25,10 @@
         <q-list>
           <q-item clickable v-ripple @click="this.refreshSession">
             <q-item-section avatar>
-              <q-icon name="refresh"/>
+              <q-icon name="add"/>
             </q-item-section>
             <q-item-section>
-              Refresh Session
+              New Chat
             </q-item-section>
           </q-item>
           <q-separator></q-separator>
@@ -64,6 +65,7 @@
 <script>
 import {ref} from 'vue'
 import {getAllChats} from "src/helpers/chat_gpt";
+import {isLoggedIn} from "src/helpers/auth";
 
 export default {
   setup() {
@@ -80,6 +82,7 @@ export default {
     this.loadAllChats()
   },
   methods: {
+    isLoggedIn: isLoggedIn,
     beforeEnter(el) {
       el.style.opacity = 0;
     },

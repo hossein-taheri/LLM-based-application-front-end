@@ -36,11 +36,11 @@ export async function login(email, password) {
 
 export function isLoggedIn() {
   const token = getToken()
-  return token == null
+  return token != null
 }
 
 export function checkIsLoggedIn() {
-  if (isLoggedIn()) {
+  if (!isLoggedIn()) {
     return redirectToLoginPage()
   }
 }
