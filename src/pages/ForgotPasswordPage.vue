@@ -2,11 +2,10 @@
   <q-page class="flex flex-center">
     <q-card class="blurred-background q-pa-md" style="width: 400px;" dark>
       <q-card-section>
-        <div class="text-h6">Sign In</div>
+        <div class="text-h6">Forgot Password</div>
       </q-card-section>
-
       <q-card-section class="transparent_background">
-        <q-form @submit="onSubmit">
+        <q-form @submit="this.onSubmit()">
           <q-input
             v-model="form.email"
             label="Email"
@@ -17,22 +16,8 @@
             clearable
             lazy-rules
           />
-
-          <q-input
-            v-model="form.password"
-            label="Password"
-            type="password"
-            :rules="[val => !!val || 'Password is required']"
-            filled
-            dark
-            clearable
-            lazy-rules
-            class="q-mt-md"
-          />
-
-
           <q-btn
-            label="Sign In"
+            label="Sign Up"
             type="submit"
             color="deep-purple-10"
             class="shadow-3 q-mt-lg full-width"
@@ -40,43 +25,45 @@
           />
         </q-form>
       </q-card-section>
-
+      <q-card-section>
+        <q-btn
+          flat
+          label="Sign In"
+          color="white"
+          @click="this.goToSignIn()"
+        />
+      </q-card-section>
     </q-card>
   </q-page>
 </template>
 
 <script>
-import {login} from "src/helpers/auth";
+import {forgotPassword} from "src/helpers/auth";
+import {Notify} from "quasar";
 
 export default {
   data() {
     return {
       form: {
         email: '',
-        password: '',
       }
     }
   },
   methods: {
     onSubmit() {
-      login(this.form.email, this.form.password).then(data => {
-        this.$router.push('/');
+      forgotPassword(this.form.email).then(data => {
+        Notify.create({
+          type: 'positive',
+          message: "Forgot password email has been sent",
+          icon: 'check',
+          position: 'top',
+        });
+        this.$router.push('/auth/sign-in');
       })
     },
+    goToSignIn() {
+      this.$router.push('/auth/sign-in');
+    }
   }
 }
 </script>
-
-<style scoped>
-.q-page {
-  background-color: #00000000;
-}
-
-.blurred-background {
-  background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
-  backdrop-filter: blur(10px); /* Apply blur effect */
-  -webkit-backdrop-filter: blur(10px); /* For Safari */
-  padding: 20px;
-  border-radius: 10px;
-}
-</style>

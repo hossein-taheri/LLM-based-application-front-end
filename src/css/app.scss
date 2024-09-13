@@ -61,3 +61,15 @@
 .red_background {
   background-color: red;
 }
+
+.q-page {
+  background-color: #00000000;
+}
+
+.blurred-background {
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+  backdrop-filter: blur(10px); /* Apply blur effect */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+  padding: 20px;
+  border-radius: 10px;
+}
