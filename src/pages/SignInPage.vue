@@ -38,7 +38,7 @@
             class="shadow-3 q-mt-lg full-width"
             dark
           />
-          <div class="q-mt-md text-center">
+          <div class="q-mt-md">
             <q-btn
               flat
               label="Forgot Password?"
@@ -47,7 +47,7 @@
             />
           </div>
 
-          <div class="q-mt-md text-center">
+          <div class="q-mt-md">
             <q-btn
               flat
               label="Don't have an account? Sign Up"

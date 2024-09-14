@@ -3,7 +3,7 @@
 
     <q-header reveal elevated class="custom_header text-white">
       <q-toolbar>
-        <q-btn v-show="this.isLoggedIn()" dense flat round icon="menu" @click="toggleLeftDrawer"/>
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer"/>
         <q-toolbar-title>
           <q-avatar rounded size="xl">
             <img src="/icons/big-icon.svg">
@@ -14,7 +14,6 @@
     </q-header>
 
     <q-drawer
-      v-show="this.isLoggedIn()"
       v-model="leftDrawerOpen"
       side="left"
       overlay
@@ -68,6 +67,11 @@ import {getAllChats} from "src/helpers/chat_gpt";
 import {isLoggedIn} from "src/helpers/auth";
 
 export default {
+  data() {
+    return {
+      chats: []
+    }
+  },
   setup() {
     const leftDrawerOpen = ref(false)
 
@@ -82,7 +86,6 @@ export default {
     this.loadAllChats()
   },
   methods: {
-    isLoggedIn: isLoggedIn,
     beforeEnter(el) {
       el.style.opacity = 0;
     },
@@ -123,12 +126,7 @@ export default {
           }
           this.chats = this.chats.reverse()
         });
-    }
-  },
-  data() {
-    return {
-      chats: []
-    }
+    },
   },
 }
 </script>
