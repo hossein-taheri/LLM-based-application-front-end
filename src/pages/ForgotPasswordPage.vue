@@ -17,7 +17,7 @@
             lazy-rules
           />
           <q-btn
-            label="Sign Up"
+            label="Send Email"
             type="submit"
             color="deep-purple-10"
             class="shadow-3 q-mt-lg full-width"
